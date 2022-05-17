@@ -54,7 +54,7 @@ def make_move(board, i, j, player = 'x'):
     return board
 
 
-def minimax(board, maximizing = True):
+def minimax(board, alpha, beta, maximizing = True):
     
     terminal, winner = is_terminal(board)
     if (terminal):
@@ -64,17 +64,26 @@ def minimax(board, maximizing = True):
     if (moves.__len__() == 0):
         return determine_score(None), None
     
-    best_score     = 2 - (4 * maximizing)
+    best_score     = 9e999 * (1 - 2 * maximizing)
     best_move      = None
     function       = ((operator.gt) if (maximizing) else (operator.lt))
     current_player = get_player(maximizing)
     
     for i, j in moves:
         
-        score = minimax(make_move(board, i, j, current_player), not maximizing)[0]
-        
+        score = minimax(make_move(board, i, j, current_player), alpha, beta, not maximizing)[0]
+                
         if (function(score, best_score)):
             best_score = score;  best_move = (i, j)
+        
+        if (maximizing):
+            alpha = max(alpha, score)
+            if (alpha >= beta):
+                break
+        else:
+            beta = min(beta, score)
+            if (alpha >= beta):
+                break
             
     return best_score, best_move
 
@@ -101,7 +110,7 @@ def main():
     
     while ((is_terminal(board)[0] == False) and (find_available_moves(board).__len__())):
         if (turn):
-            best_move = minimax(board)[1]
+            best_move = minimax(board, -9e999, 9e999)[1]
             board = make_move(board, *best_move, player = get_player(turn))
         else:
             board = input_board(board)
