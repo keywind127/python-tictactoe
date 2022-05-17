@@ -2,6 +2,9 @@ import operator, pprint, numpy, copy
 
 BOARD_SIZE = 3
 
+WINNER_DICT = {  'x' : 1, 'o' : -1  }
+
+
 def generate_board():
     board = numpy.array([
         [ ' ', ' ', ' ' ],  
@@ -10,14 +13,15 @@ def generate_board():
     ])
     return board
 
+
 def find_available_moves(board):
-    moves = numpy.array([  
-        (i, j) for (i, j) in zip(*numpy.where(board == ' '))  ])
+    moves = [  (i, j) for (i, j) in zip(*numpy.where(board == ' '))  ]
     return moves 
 
+
 def determine_score(winner):
-    winner_dict = {  'x' : 1, 'o' : -1  }
-    return winner_dict.get(winner, 0)
+    return WINNER_DICT.get(winner, 0)
+
 
 def is_terminal(board):
     
@@ -39,6 +43,7 @@ def is_terminal(board):
             return terminal, winner
         
     return False, None
+
 
 def get_player(maximizing = True):
     return (('x') if (maximizing) else ('o'))
